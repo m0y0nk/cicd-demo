@@ -18,6 +18,7 @@ Registry (GHCR) only after CI succeeds for a push to `main`.
 │   └── cd.yml             # Publish the tested image to GHCR
 ├── app/                   # Calculator application
 ├── tests/                 # Automated tests
+├── screenshots/                 # Screenshots
 ├── Dockerfile
 ├── build.sh               # Creates the downloadable application bundle
 └── requirements.txt
@@ -56,91 +57,8 @@ Registry (GHCR) only after CI succeeds for a push to `main`.
   `build/` under a commit-specific artifact name; find it on the successful
   CI run's **Artifacts** section. The container image is the CD deliverable.
 
-## Run locally
+Execution Screenshots:
 
-Requires Python 3.12 or newer and pytest.
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m pytest -v
-bash build.sh
-python -m app.calculator
-```
-
-Try `10 + 5`, `-2 * 3`, or `10 / 0`; type `q` to exit. The last expression
-prints a user-friendly division-by-zero error.
-
-## Build and run the Docker image
-
-Install and start Docker Desktop first, then from the project root:
-
-```bash
-docker build -t calculator-demo:local .
-docker run --rm -it calculator-demo:local
-```
-
-## Run the pipelines on GitHub
-
-1. Create an **empty** GitHub repository (do not initialize it with a README,
-   license, or `.gitignore`).
-2. In this project folder, run the commands below, replacing the URL with the
-   HTTPS URL of your repository:
-
-   ```bash
-   git init
-   git add .
-   git commit -m "Build GitHub Actions CI/CD demo"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-   git push -u origin main
-   ```
-
-3. On GitHub, open **Actions**. The push starts **CI Pipeline**. Open its run
-   and verify **Test application** and **Build and package** pass. The build
-   job uploads the `calculator-build-<commit>` artifact.
-4. After CI succeeds, **CD Pipeline** starts automatically. Confirm its
-   publish job succeeds, then open the repository's **Packages** page to find
-   the `latest` and `sha-<commit>` container tags.
-5. If package publishing is denied, open the repository's **Settings →
-   Actions → General** and enable **Read and write permissions** for
-   `GITHUB_TOKEN`. The workflow also declares the required job-level
-   `packages: write` permission.
-
-To download and run the published image (replace the owner/repository):
-
-```bash
-docker pull ghcr.io/YOUR_USERNAME/YOUR_REPOSITORY:latest
-docker run --rm -it ghcr.io/YOUR_USERNAME/YOUR_REPOSITORY:latest
-```
-
-## Capture successful-run screenshots
-
-The Actions screenshots need to come from the actual runs in your GitHub
-repository; they cannot be generated before you push and GitHub executes the
-workflows. After both runs succeed:
-
-1. Capture the CI run page showing the completed green jobs and uploaded
-   artifact.
-2. Capture the CD run page showing the successful publish job (and, if useful,
-   the repository Packages page with the published tags).
-3. Save the images in `docs/screenshots/` as `ci-success.png` and
-   `cd-success.png`, then commit and push them:
-
-   ```bash
-   mkdir -p docs/screenshots
-   # Save your screenshots as docs/screenshots/ci-success.png and cd-success.png
-   git add docs/screenshots
-   git commit -m "Add successful pipeline screenshots"
-   git push
-   ```
-
-Do not add credentials, `.env` files, access tokens, or private keys to
-screenshots or the repository.
-
-## See a failed CI run (optional)
-
-Change an expected value in a test, push the change, and observe that the test
-job fails and the build job is skipped. Restore the test, push again, and
-confirm CI passes. CD does not publish an image for the failed run.
+![git push](/screenshots/image.png)
+![alt text](/screenshots/image-1.png)
+![alt text](/screenshots/image-2.png)
